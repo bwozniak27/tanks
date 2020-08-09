@@ -16,18 +16,22 @@
 #include <cmath>
 #include <vector>
 
-
+//for float comparison accuracy
 float EPSILON = 0.0001;
+//to keep speeds the same
 float shot_speed = 0.2;
 float move_speed = 0.1;
+//to determine which wall is closest
 int vert = 1;
 int hor = 2;
 int both = 6;
 int none = -1;
+//for turning
 int left = 3;
 int right = 4;
 int up = 5;
 int down = 7;
+//conversions
 float rad_to_degrees = 360.0 / 6.28;
 float fit_to_rad = (6.28 / 8.0) / 800;
 float sprite_size = 30.0;
@@ -41,6 +45,9 @@ public:
     }
     
     void set_borders() {
+        // puts all walls in one vector, and also has two separate ones for vertical walls
+        // and horizontal ones
+        
         sf::RectangleShape farLeft(sf::Vector2f(5.0f, 500.0f));
         farLeft.setFillColor(sf::Color::White);
         farLeft.setPosition(60.0f, 60.0f);
@@ -122,7 +129,7 @@ public:
     }
     
     
-    // checks direction of closest wall for dodging
+    // checks direction of closest wall for dodging bullets
     int check_proximity(sf::Vector2f position, int orientation) {
         float min_distance = 100000;
         int proximity;  // this tells where the closest wall is, NOT where the player
@@ -161,7 +168,7 @@ public:
         return proximity;
     }
     
-    
+    //checks if a sprite has collided with a wall
     bool collide(sf::FloatRect main) {
         for (auto i:walls) {
             if (main.intersects(i.getGlobalBounds())) {
@@ -171,7 +178,7 @@ public:
         return false;
     }
     
-    
+    //draws window
     void draw(sf::RenderWindow &window) {
         for (auto i:walls) {
             window.draw(i);
@@ -179,12 +186,13 @@ public:
     }
     
 private:
+    //static to save memory
     static std::vector<sf::RectangleShape> walls;
     static std::vector<int> vert_indexes;
     static std::vector<int> hor_indexes;
 };
 
-
+//intitializes static variables
 std::vector<sf::RectangleShape> Borders::walls = {};
 std::vector<int> Borders::vert_indexes = {};
 std::vector<int> Borders::hor_indexes = {};

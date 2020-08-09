@@ -10,14 +10,11 @@
 #define tanks_h
 #include "amo.h"
 
-
+// the angle the sprite should turn at
 float turnAngle = 0.034 / 4.0;
 
-
-sf::Vector2f give_direction(float angle);
-
+// for comparing vectors
 bool operator==(const sf::Vector2f& first, const sf::Vector2f& second);
-
 bool operator!=(const sf::Vector2f& first, const sf::Vector2f& second);
 
 
@@ -57,7 +54,8 @@ public:
         escape_mode = false;
     }
     
-    
+    // checks if sprite will hit a wall via a loop. Currently not being used to minimize
+    // computation for loading speed
     int detect_walls() {
         sf::RectangleShape test(sf::Vector2f(35.0, 35.0));
         test.setOrigin(15.0, 15.0);
@@ -72,7 +70,7 @@ public:
         return -1;
     }
     
-    //decides whether to turn right or left
+    // decides whether to turn right or left
     int which_turn(int proximity) {
         if (proximity == right) {
             if (direction.y <= 0) {
@@ -103,8 +101,14 @@ public:
         return proximity;
     }
     
-    //changes angle on direction vector
+    // iteration 5 of creating random movement smooth movement while avoiding walls and
+    // loading quickly. Doesn't work well
+    
+    // changes angle on direction vector
+    // close tells which wall it is close to.
+    // see 'private' for variable descriptions
     void change_direction(int close) {
+        // first 4 are for corners
         if (close % up == 0 && close % left == 0) {
             if (!escape_mode) {
                 pause = 0;
@@ -129,6 +133,7 @@ public:
                 escape_mode = true;
                 direction = sf::Vector2f(-0.70710678118 * 2.0, 0.70710678118 * 2.0);
             }
+        // for avoinding standard wall
         } else if (close >= 0) {
             escape_mode = false;
             float angle;
@@ -195,13 +200,12 @@ public:
         }
     }
     
-    
+    // rotates barrel to where the player is
     void rotate(sf::Vector2i location) {
         sf::Vector2f pointer = sf::Vector2f(location.x - barrel.getPosition().x, location.y - barrel.getPosition().y);
         float angle;
         float hypotenuse = sqrt((pointer.x * pointer.x) + (pointer.y * pointer.y));
         pointer = sf::Vector2f(pointer.x, pointer.y * -1);
-        //directions might be off because y axis is flipped
         if (pointer.x > 0 && pointer.y > 0) {
             angle = asin(pointer.y / hypotenuse);
             angle *= (360.0 / 6.28);
@@ -214,7 +218,6 @@ public:
         } else if (pointer.x < 0 && pointer.y < 0) {
             angle = asin(pointer.y / hypotenuse);
             angle *= (360.0 / 6.28);
-            //angle = 90.0 - angle;
             barrel.setRotation(angle + 90.0);
         } else if (pointer.x > 0 && pointer.y < 0) {
             angle = asin(pointer.y / hypotenuse);
@@ -231,9 +234,11 @@ public:
             barrel.setRotation(270.0);
         }
         
-        //barrel.setRotation(90.0);
     }
     
+    // iteration 3 of avoiding bullet while limiting computation
+    // works by checking if bullet is moving more horizontally or vertically, and moving
+    // the perpendicular direction away from the nearest wall
     sf::Vector2f evasive_action(sf::Vector2f bullet) {
         int proximity;
         if (abs(bullet.x) >= abs(bullet.y)) {
@@ -253,7 +258,7 @@ public:
         }
     }
     
-    
+    // moves normally is not in danger, otherwise goes into dodge mode
     void reaction() {
         
         if (!level.collide(cpu.getGlobalBounds())) {
@@ -267,7 +272,7 @@ public:
     }
     
     
-    //where all the magic happens
+    // where all the magic happens i.e handles all actions
     void action() {
         sf::Vector2f bullet = weapons.will_hit(cpu);
         if (bullet != sf::Vector2f(0.0, 0.0)) {
@@ -326,7 +331,7 @@ private:
     Borders level; // to access walls
     int health;
     int pause; // to delay motion
-    bool escape_mode; // for delaying motion
+    bool escape_mode; // for the when sprite is close to the wall but is moving away
 };
 
 
@@ -355,6 +360,7 @@ public:
         health = 100;
     }
     
+    //  movement while not allowing intersection with walls or other sprites
     void move_player(Borders level, CPU opponent) {
         
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
@@ -408,12 +414,12 @@ public:
         
     }
     
+    // rotates barrel to where the mouse is
     void rotate(sf::Vector2i location) {
         sf::Vector2f direction = sf::Vector2f(location.x - barrel.getPosition().x, location.y - barrel.getPosition().y);
         float angle;
         float hypotenuse = sqrt((direction.x * direction.x) + (direction.y * direction.y));
         direction = sf::Vector2f(direction.x, direction.y * -1);
-        //directions might be off because y axis is flipped
         if (direction.x > 0 && direction.y > 0) {
             angle = asin(direction.y / hypotenuse);
             angle *= (360.0 / 6.28);
@@ -443,7 +449,6 @@ public:
             barrel.setRotation(270.0);
         }
         
-        //barrel.setRotation(0.0);
     }
     
     int hit() {
@@ -497,9 +502,6 @@ private:
 };
 
 
-sf::Vector2f give_direction(float angle) {
-    
-}
 
 
 bool operator==(const sf::Vector2f &first, const sf::Vector2f &second) {
