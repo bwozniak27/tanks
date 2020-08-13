@@ -163,7 +163,14 @@ public:
         }
     }
     
-    //determines movement
+    /*
+        need to figure out why movement spams sometimes when close to a wall. May be beause
+        the escape mode isn't working. It still tries to turn even when it is moving away
+        from the wall. I don't understand where the glitching comes in, however. There is
+        a bug somewhere in either change_direction, which turn, check_distance, or move.
+    */
+    
+    // determines movement
     void move() {
         pause++;
         if (pause > 100) {
@@ -356,7 +363,7 @@ public:
         health = 100;
     }
     
-    //  movement while not allowing intersection with walls or other sprites
+    // movement while not allowing intersection with walls or other sprites
     void move_player(Borders level, CPU opponent) {
         
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {

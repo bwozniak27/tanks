@@ -1,0 +1,9 @@
+Notes Document:
+
+1. The movement is still super glitchy. The passive movement sequence goes: check_distance
+    -> which_turn -> change_direction -> move.
+2. Maybe I should try and mimick the wii tanks more and do the movement by rotating the
+    body of the tank and just moving forward. I would have a function that just
+    handles the math behind it.
+3. Should I just have it stop every time I want to turn? Certainly it would be less glitchy
+    but wouldn't look as cool.
