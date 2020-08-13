@@ -98,30 +98,24 @@ public:
         int proximity = none;  // this tells where the closest wall is, NOT where the player
         // should move
         for (auto i:vert_indexes) {
-            if (position.y + (sprite_size / 2.0) >= walls[i].getPosition().y
-                && position.y + (sprite_size / 2.0) <= walls[i].getPosition().y + walls[i].getSize().y) {
-                float temp = position.x - walls[i].getPosition().x;
-                if ((abs(temp) < min_distance)) {
-                    //min_distance = abs(temp);
-                    if (temp < 0) {
-                        proximity *= right;
-                    } else {
-                        proximity *= left;
-                    }
+            float temp = position.x - walls[i].getPosition().x;
+            if ((abs(temp) < min_distance)) {
+                //min_distance = abs(temp);
+                if (temp < 0) {
+                    proximity *= right;
+                } else {
+                    proximity *= left;
                 }
             }
         }
         for (auto i:hor_indexes) {
-            if (position.x + (sprite_size / 2.0) >= walls[i].getPosition().x
-                && position.x + (sprite_size / 2.0) <= walls[i].getPosition().x + walls[i].getSize().x) {
-                float temp = position.y - walls[i].getPosition().y;
-                if ((abs(temp) < min_distance)) {
-                    //min_distance = abs(temp);
-                    if (temp < 0) {
-                        proximity *= down;
-                    } else {
-                        proximity *= up;
-                    }
+            float temp = position.y - walls[i].getPosition().y;
+            if ((abs(temp) < min_distance)) {
+                //min_distance = abs(temp);
+                if (temp < 0) {
+                    proximity *= down;
+                } else {
+                    proximity *= up;
                 }
             }
         }

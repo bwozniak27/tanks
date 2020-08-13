@@ -11,7 +11,8 @@
 #include "amo.h"
 
 // the angle the sprite should turn at
-float turnAngle = 0.034 / 4.0;
+//float turnAngle = 0.034 / 4.0;
+float turnAngle = 0.05;
 
 // for comparing vectors
 bool operator==(const sf::Vector2f& first, const sf::Vector2f& second);
@@ -41,7 +42,7 @@ public:
         cpu.setSize(sf::Vector2f(30.0, 30.0));
         cpu.setFillColor(sf::Color::Yellow);
         cpu.setOrigin(15.0f, 15.0f);
-        cpu.setPosition(500.0f, 100.0f);
+        cpu.setPosition(300.0f, 300.0f);
         barrel.setSize(sf::Vector2f(8.0, 35.0));
         barrel.setFillColor(sf::Color::Green);
         barrel.setOrigin(5.0, 5.0);
@@ -145,6 +146,7 @@ public:
             } else {
                 newAngle = angle - turnAngle;
             }
+            //direction.y += 0.05;
             direction.y = hypotenuse * sin(newAngle);
             direction.x = hypotenuse * cos(newAngle);
             float angle_in_degrees = newAngle * rad_to_degrees;
@@ -164,40 +166,34 @@ public:
     //determines movement
     void move() {
         pause++;
-        if (pause > 10) {
+        if (pause > 100) {
             change_direction(which_turn(level.check_distance(cpu.getPosition())));
-            cpu.move(direction);
-            barrel.move(direction);
-            
-            
-            //collision side detection
-            if (level.collide(cpu.getGlobalBounds())) {
-                
-                sf::RectangleShape left(sf::Vector2f(1.0, 1.0));
-                left.setPosition(cpu.getPosition().x - 16, cpu.getPosition().y);
-                
-                sf::RectangleShape right(sf::Vector2f(1.0, 1.0));
-                right.setPosition(cpu.getPosition().x + 16, cpu.getPosition().y);
-                
-                sf::RectangleShape top(sf::Vector2f(1.0, 1.0));
-                top.setPosition(cpu.getPosition().x, cpu.getPosition().y - 16);
-                
-                sf::RectangleShape bottom(sf::Vector2f(1.0, 1.0));
-                bottom.setPosition(cpu.getPosition().x, cpu.getPosition().y + 16);
-                
-                if (level.collide(left.getGlobalBounds()) || level.collide(right.getGlobalBounds())) {
-                    direction = sf::Vector2f(direction.x * -1, direction.y);
-                } else if (level.collide(top.getGlobalBounds()) || level.collide(bottom.getGlobalBounds())) {
-                    direction = sf::Vector2f(direction.x, direction.y * -1);
-                }
-                
-                //direction = sf::Vector2f(-direction.x, -direction.y);
-                cpu.move(direction);
-                barrel.move(direction);
-                cpu.move(direction);
-                barrel.move(direction);
-            }
+            pause = 0;
         }
+        if (level.collide(cpu.getGlobalBounds())) {
+            
+            sf::RectangleShape left(sf::Vector2f(1.0, 1.0));
+            left.setPosition(cpu.getPosition().x - 16, cpu.getPosition().y);
+            
+            sf::RectangleShape right(sf::Vector2f(1.0, 1.0));
+            right.setPosition(cpu.getPosition().x + 16, cpu.getPosition().y);
+            
+            sf::RectangleShape top(sf::Vector2f(1.0, 1.0));
+            top.setPosition(cpu.getPosition().x, cpu.getPosition().y - 16);
+            
+            sf::RectangleShape bottom(sf::Vector2f(1.0, 1.0));
+            bottom.setPosition(cpu.getPosition().x, cpu.getPosition().y + 16);
+            
+            if (level.collide(left.getGlobalBounds()) || level.collide(right.getGlobalBounds())) {
+                direction = sf::Vector2f(direction.x * -1, direction.y);
+            } else if (level.collide(top.getGlobalBounds()) || level.collide(bottom.getGlobalBounds())) {
+                direction = sf::Vector2f(direction.x, direction.y * -1);
+            }
+            
+        }
+        cpu.move(direction);
+        barrel.move(direction);
+        
     }
     
     // rotates barrel to where the player is
